@@ -14,12 +14,6 @@ struct Task {
     std::exception_ptr exception;
 };
 
-template <>
-struct Task<void> {
-    uint32_t id;
-    std::exception_ptr exception;
-};
-
 class AsyncExecutor {
 public:
     AsyncExecutor() : task_id_counter(0), finished_task_count(0), max_valid_task_id(0) {}
@@ -36,7 +30,7 @@ public:
                 auto result = std::make_shared<ResultType>(task());
                 mark_task_finished<ResultType>(task_id, result);
             } catch (...) {
-                mark_task_exception(task_id, std::current_exception());
+                mark_task_exception<ResultType>(task_id, std::current_exception());
             }
         }).detach();
         return task_id;
@@ -92,12 +86,13 @@ private:
         finished_task_count.fetch_add(1, std::memory_order_relaxed);
     }
 
+    template <typename ResultType>
     void mark_task_exception(uint32_t task_id, std::exception_ptr eptr) {
         std::lock_guard<std::mutex> lock(mutex_);
         if (task_id < max_valid_task_id.load(std::memory_order_relaxed) || cancelled_task_ids.count(task_id)) {
             return;
         }
-        auto task = std::make_shared<Task<void>>();
+        auto task = std::make_shared<Task<ResultType>>();
         task->id = task_id;
         task->exception = eptr;
         finished_tasks.emplace(task_id, task);
