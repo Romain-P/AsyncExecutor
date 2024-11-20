@@ -46,3 +46,9 @@ Currently, cancel one specific or all tasks does not actually kill the thread, t
 I did that on purpose: the external libs that's im using for my project are completely blocking without any option to cancel a task (I/O or crypto alg.).  
 
 If you actually need to stop the thread, you can give a shot to the risky TerminateThread api of windows, or add a new atomic integer `CancelRequested` and passes it to the task so it can cancel on demand (if you have the hand on it).
+
+#### Enhancements
+
+Well, this tiny class was written for my special need, so of course it's not the best. A regular thread pool would give a more stateful executor.  
+I actually couldn't find a thread pool impl that completely fulfill my need, so I did one ;) 
+If thread count or thread caching is a need for you, feel free to PR
