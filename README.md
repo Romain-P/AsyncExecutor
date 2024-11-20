@@ -26,7 +26,7 @@ int main() {
 	//simulate game thread
     while(true) {
         auto now = std::chrono::duration_cast<std::chrono::nanoseconds >(std::chrono::high_resolution_clock::now().time_since_epoch()).count();
-        auto result = async.try_pop<beauty::response>();
+        auto result = async.try_pop<beauty::response>(); //pop task results thread safely
 
         if (result != nullptr) {
             bool x = result->result->is_status_ok();
