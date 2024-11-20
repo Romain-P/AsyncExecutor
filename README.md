@@ -12,7 +12,7 @@ int main() {
     AsyncExecutor async;
 
 	//let's assume the requests are sent from the while. didn't add it on purpose for benchmarking
-    for (int i=0; i < 1; ++i) {
+    for (int i=0; i < 100; ++i) {
         async.execute<beauty::response>([] {
             beauty::client client;
 
